@@ -8,6 +8,12 @@ import { User } from '../server/dist/server/models/User.js';
 
 let appPromise;
 
+const safeConfigurationErrors = new Set([
+  'MONGODB_URI is required to run the API on Vercel.',
+  'SESSION_SECRET must contain at least 32 characters.',
+  'CLIENT_ORIGIN must be set to the exact deployed site origin.',
+]);
+
 async function getApp() {
   if (!appPromise) {
     appPromise = (async () => {
@@ -64,7 +70,10 @@ export default async function handler(request, response) {
       });
     });
   } catch (error) {
-    console.error('Vercel API request failed.', error instanceof Error ? error.name : 'UnknownError');
+    const detail = error instanceof Error && safeConfigurationErrors.has(error.message)
+      ? error.message
+      : error instanceof Error ? error.name : 'UnknownError';
+    console.error('Vercel API request failed.', detail);
     if (!response.headersSent) {
       response.statusCode = 503;
       response.setHeader('Content-Type', 'application/json; charset=utf-8');
