@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import { createApp, MongoStore } from '../server/dist/app.js';
-import { CartItem } from '../server/dist/models/CartItem.js';
-import { Order } from '../server/dist/models/Order.js';
-import { PaymentWebhookEvent } from '../server/dist/models/PaymentWebhookEvent.js';
-import { Product } from '../server/dist/models/Product.js';
-import { User } from '../server/dist/models/User.js';
+import { createApp, MongoStore } from '../server/dist/server/app.js';
+import { CartItem } from '../server/dist/server/models/CartItem.js';
+import { Order } from '../server/dist/server/models/Order.js';
+import { PaymentWebhookEvent } from '../server/dist/server/models/PaymentWebhookEvent.js';
+import { Product } from '../server/dist/server/models/Product.js';
+import { User } from '../server/dist/server/models/User.js';
 
 let appPromise;
 
