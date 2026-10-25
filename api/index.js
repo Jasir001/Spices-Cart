@@ -66,7 +66,9 @@ export default async function handler(request, response) {
   } catch (error) {
     console.error('Vercel API request failed.', error instanceof Error ? error.name : 'UnknownError');
     if (!response.headersSent) {
-      response.status(503).json({ error: 'The service is temporarily unavailable. Please try again later.' });
+      response.statusCode = 503;
+      response.setHeader('Content-Type', 'application/json; charset=utf-8');
+      response.end(JSON.stringify({ error: 'The service is temporarily unavailable. Please try again later.' }));
     }
   }
 }
