@@ -1,0 +1,49 @@
+services:
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "try { rs.status().ok } catch (error) { rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'mongo:27017'}]}).ok }"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:5000"
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 5000
+      MONGODB_URI: mongodb://mongo:27017/spice-cart?replicaSet=rs0
+      SESSION_SECRET: ${SESSION_SECRET:?Set SESSION_SECRET in the project .env file}
+      CLIENT_ORIGIN: http://localhost:3000
+      CHECKOUT_ENABLED: ${CHECKOUT_ENABLED:-false}
+      ENABLE_LIVE_PAYMENTS: ${ENABLE_LIVE_PAYMENTS:-false}
+      RAZORPAY_MODE: ${RAZORPAY_MODE:-test}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+      RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+      STORE_NAME: ${STORE_NAME:-}
+      STORE_LEGAL_NAME: ${STORE_LEGAL_NAME:-}
+      STORE_ADDRESS: ${STORE_ADDRESS:-}
+      STORE_CONTACT_EMAIL: ${STORE_CONTACT_EMAIL:-}
+      STORE_CONTACT_PHONE: ${STORE_CONTACT_PHONE:-}
+      SHIPPING_POLICY_URL: ${SHIPPING_POLICY_URL:-}
+      RETURNS_POLICY_URL: ${RETURNS_POLICY_URL:-}
+      PRIVACY_POLICY_URL: ${PRIVACY_POLICY_URL:-}
+      TERMS_POLICY_URL: ${TERMS_POLICY_URL:-}
+      SHIPPING_FEE_PAISE: ${SHIPPING_FEE_PAISE:-}
+      TAX_RATE_BPS: ${TAX_RATE_BPS:-}
+      ADMIN_USER_IDS: ${ADMIN_USER_IDS:-}
+
+volumes:
+  mongo-data:

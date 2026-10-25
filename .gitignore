@@ -1,0 +1,11 @@
+node_modules
+dist
+.vite
+npm-debug.log*
+.env
+.env.*
+!.env.example
+server/dist
+*.tsbuildinfo
+/vite.config.js
+/vite.config.d.ts
