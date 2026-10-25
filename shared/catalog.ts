@@ -119,4 +119,4 @@ export const products: Product[] = [
     imageAlt: 'Assorted spices that may be included in a gift set; not gift-box packaging',
     variants: [{ weight: '3-piece set', price: 999 }, { weight: '6-piece set', price: 1799 }],
   },
-];
+].map((product) => ({ ...product, isDemo: true, orderable: false }));
